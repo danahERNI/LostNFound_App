@@ -6,11 +6,25 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LostNFound_App.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class final : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Inventory",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StaffName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ItemId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Inventory", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "ItemsCategory",
                 columns: table => new
@@ -48,11 +62,18 @@ namespace LostNFound_App.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ItemCategoryId = table.Column<int>(type: "int", nullable: false)
+                    ItemCategoryId = table.Column<int>(type: "int", nullable: false),
+                    InventoryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Items", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Items_Inventory_InventoryId",
+                        column: x => x.InventoryId,
+                        principalTable: "Inventory",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Items_ItemsCategory_ItemCategoryId",
                         column: x => x.ItemCategoryId,
@@ -90,6 +111,11 @@ namespace LostNFound_App.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Items_InventoryId",
+                table: "Items",
+                column: "InventoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Items_ItemCategoryId",
                 table: "Items",
                 column: "ItemCategoryId",
@@ -117,6 +143,9 @@ namespace LostNFound_App.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Inventory");
 
             migrationBuilder.DropTable(
                 name: "ItemsCategory");

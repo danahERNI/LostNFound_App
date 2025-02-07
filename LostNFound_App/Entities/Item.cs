@@ -7,6 +7,8 @@
         public string Description { get; set; }
         public string Status {  get; set; }
         public int ItemCategoryId { get; set; }
+        public Inventory Inventory { get; set; }
+        public int InventoryId { get; set; }
         //public ItemCategory ItemCategory {  get; set; }
     }
 }

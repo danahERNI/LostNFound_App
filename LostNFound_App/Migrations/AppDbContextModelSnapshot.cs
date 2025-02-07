@@ -22,6 +22,26 @@ namespace LostNFound_App.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("LostNFound_App.Entities.Inventory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StaffName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Inventory");
+                });
+
             modelBuilder.Entity("LostNFound_App.Entities.Item", b =>
                 {
                     b.Property<int>("Id")
@@ -33,6 +53,9 @@ namespace LostNFound_App.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("InventoryId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ItemCategoryId")
                         .HasColumnType("int");
@@ -46,6 +69,8 @@ namespace LostNFound_App.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("InventoryId");
 
                     b.HasIndex("ItemCategoryId")
                         .IsUnique();
@@ -127,11 +152,19 @@ namespace LostNFound_App.Migrations
 
             modelBuilder.Entity("LostNFound_App.Entities.Item", b =>
                 {
+                    b.HasOne("LostNFound_App.Entities.Inventory", "Inventory")
+                        .WithMany("Items")
+                        .HasForeignKey("InventoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("LostNFound_App.Entities.ItemCategory", null)
                         .WithOne("Item")
                         .HasForeignKey("LostNFound_App.Entities.Item", "ItemCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Inventory");
                 });
 
             modelBuilder.Entity("LostNFound_App.Entities.Transaction", b =>
@@ -151,6 +184,11 @@ namespace LostNFound_App.Migrations
                     b.Navigation("Item");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("LostNFound_App.Entities.Inventory", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("LostNFound_App.Entities.ItemCategory", b =>
